@@ -34,11 +34,12 @@ yelp_business_data$Thursday <- yelp_business_data$hours$Thursday
 yelp_business_data$Friday <- yelp_business_data$hours$Friday
 yelp_business_data$Saturday <- yelp_business_data$hours$Saturday
 yelp_business_data$Sunday <- yelp_business_data$hours$Sunday
-yelp_business_data <- yelp_business_data[,c(-12,-14)]
 yelp_business_data$city <- factor(yelp_business_data$city)
 yelp_business_data$state <- factor(yelp_business_data$state)
 yelp_business_data$postal_code <- factor(yelp_business_data$postal_code)
 yelp_business_data$is_open <- factor(yelp_business_data$is_open)
+yelp_business_attribute <- yelp_business_data[,12]
+yelp_business_data <- yelp_business_data[,c(-12,-14)]
 #yelp_business_data$categories <- factor(yelp_business_data$categories)
 ```
 
@@ -179,20 +180,19 @@ yelp_restaurant1$categories <- gsub('"beer"|"cocktail"|"champagne"|"wine"|"whisk
 yelp_restaurant1$categories <- gsub('"churros"|"catalan"|"empanadas"','"spainish"',yelp_restaurant1$categories)
 yelp_restaurant1$categories <- gsub('"pancakes"|"cakes"|"cake"|"candy"|"cupcakes"|"cream"|"creperies"|"popcorn"|"sugar"|"waffles"|"cheesescafeks"|"chocolatiers"|"donuts"|"chocolatiers"|"macarons"|"offdessertss"|"offdesserts"|"practdesserts"|"servdessertss"|"servdesserts"|"spdessertss"|"ice"','"desserts"',yelp_restaurant1$categories)
 yelp_restaurant1$categories <- gsub('"bulgarian"|"eritrean"|"guamanian"|"iberian"|"mauritius"|"nicaraguan"|"polynesian"|"slovakian"|"scottish"|"tuscan"|"uzbek"|"trinidadian"|"calabrian"|"senegalese"|"sicilian"|"swiss"','"othercountries"',yelp_restaurant1$categories)
-yelp_restaurant1$categories <- gsub('"rotisserie"|"donairs"|"kebab"|"roasteries"|"steakhouses"|"cheesesteaks"|"fish"|"chicken"','"meat"',yelp_restaurant1$categories)
+yelp_restaurant1$categories <- gsub('"rotisserie"|"donairs"|"kebab"|"roasteries"|"steakhouses"|"cheesesteaks"|"fish"|"chicken"|"poke"','"meat"',yelp_restaurant1$categories)
 yelp_restaurant1$categories <- gsub('"bagels"|"bakeries"|"dumplings"|"pasta"|"ramen"|"noodles"|"udon"|"patisserie"','"flourfood"',yelp_restaurant1$categories)
 yelp_restaurant1$categories <- gsub('"pretzels"','"german"',yelp_restaurant1$categories)
 yelp_restaurant1$categories <- gsub('"rican"','"puerto"',yelp_restaurant1$categories)
 yelp_restaurant1$categories <- gsub('"spainish"|"tapas"','"spanish"',yelp_restaurant1$categories)
 yelp_restaurant1$categories <- gsub('"sushi"|"tempura"|"teppanyaki"','"japanese"',yelp_restaurant1$categories)
 yelp_restaurant1$categories <- gsub('"burgers"|"chips"|"falafel"|"pizza"|"delicatessen"|"delis"|"pita"|"junk"','"fast"',yelp_restaurant1$categories)
-yelp_restaurant1$categories <- gsub('"bowls"|"sandwiches"|"poke"','"salad"',yelp_restaurant1$categories)
+yelp_restaurant1$categories <- gsub('"bowls"|"sandwiches"','"salad"',yelp_restaurant1$categories)
 yelp_restaurant1$categories <- gsub('"fondue"|"pot"|"szechuan"|"dim"|"cantonese"|"taiwanese"','"chinese"',yelp_restaurant1$categories)
 yelp_restaurant1$categories <- gsub('"tacos"','"mexican"',yelp_restaurant1$categories)
 yelp_restaurant1$categories <- gsub('"poutineries"','"french"',yelp_restaurant1$categories)
 yelp_restaurant1$categories <- gsub('[(]|["]|[)]|[,]','',yelp_restaurant1$categories)
 ```
-
 
 ```{r}
 cate <- strsplit(yelp_restaurant1$categories,' ')
@@ -226,8 +226,52 @@ freq1
 ```{r}
 k <- names(freq1)
 country <- str_c(k[-1],collapse='|')
-country_name <- str_match_all(yelp_restaurant1$categories,country)
+#country_name <- str_match_all(yelp_restaurant1$categories,country)
+yelp_restaurant1$country <- str_match_all(yelp_restaurant1$categories,country)
+yelp_restaurant1$country <- gsub('c[(]+|[)]+|["]','',yelp_restaurant1$country)
+yelp_restaurant1$country <- gsub('[", "]',' ',yelp_restaurant1$country)
 ```
+
+```{r}
+yelp_restaurant1$country[yelp_restaurant1$country == 'character(0'] = NA
+```
+
+
+```{r}
+#category <- str_c(new_list,collapse='|')
+```
+
+```{r}
+yelp_restaurant1$acai <- ifelse(str_detect(yelp_restaurant1$categories,"acai"),1,0)
+yelp_restaurant1$alcohol <- ifelse(str_detect(yelp_restaurant1$categories,"alcohol"),1,0)
+yelp_restaurant1$barbeque <- ifelse(str_detect(yelp_restaurant1$categories,"barbeque"),1,0)
+yelp_restaurant1$breakfast <- ifelse(str_detect(yelp_restaurant1$categories,"breakfast"),1,0)
+yelp_restaurant1$brunch <- ifelse(str_detect(yelp_restaurant1$categories,"brunch"),1,0)
+yelp_restaurant1$buffets <- ifelse(str_detect(yelp_restaurant1$categories,"buffets"),1,0)
+yelp_restaurant1$delivery <- ifelse(str_detect(yelp_restaurant1$categories,"delivery"),1,0)
+yelp_restaurant1$desserts <- ifelse(str_detect(yelp_restaurant1$categories,"desserts"),1,0)
+yelp_restaurant1$dinner <- ifelse(str_detect(yelp_restaurant1$categories,"dinner"),1,0)
+yelp_restaurant1$drinks <- ifelse(str_detect(yelp_restaurant1$categories,"drinks"),1,0)
+yelp_restaurant1$flourfood <- ifelse(str_detect(yelp_restaurant1$categories,"flourfood"),1,0)
+yelp_restaurant1$fruits <- ifelse(str_detect(yelp_restaurant1$categories,"fruits"),1,0)
+yelp_restaurant1$imported <- ifelse(str_detect(yelp_restaurant1$categories,"imported"),1,0)
+yelp_restaurant1$local <- ifelse(str_detect(yelp_restaurant1$categories,"local"),1,0)
+yelp_restaurant1$organic <- ifelse(str_detect(yelp_restaurant1$categories,"organic"),1,0)
+yelp_restaurant1$salad <- ifelse(str_detect(yelp_restaurant1$categories,"salad"),1,0)
+yelp_restaurant1$vegan <- ifelse(str_detect(yelp_restaurant1$categories,"vegan"),1,0)
+yelp_restaurant1$meat <- ifelse(str_detect(yelp_restaurant1$categories,"meat"),1,0)
+yelp_restaurant1$kosher <- ifelse(str_detect(yelp_restaurant1$categories,"kosher"),1,0)
+```
+
+```{r}
+#for (i in new_list) { yelp_restaurant1 <- data.frame(append(yelp_restaurant1,str_detect(yelp_restaurant1$categories,i) )) }
+```
+
+```{r}
+yelp_restaurant1 <- yelp_restaurant1[,-grep('categories',colnames(yelp_restaurant1))]
+```
+
+
 
 
 
